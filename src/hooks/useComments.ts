@@ -62,7 +62,7 @@ export function useComments() {
       );
 
       return items;
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('getPostComments failed', err);
       return [];
     }
