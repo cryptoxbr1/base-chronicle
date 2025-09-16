@@ -13,7 +13,7 @@ const connectors = [
     appLogoUrl: '/baseline-logo.png',
   }),
   // OKX Wallet connector (if available in the environment)
-  okxWallet ? okxWallet() : undefined,
+  ...(typeof okxWallet !== 'undefined' ? [okxWallet()] : []),
   ...(walletConnectProjectId
     ? [
         walletConnect({
@@ -27,7 +27,7 @@ const connectors = [
         }),
       ]
     : []),
-];
+].filter(Boolean) as any[];
 
 export const config = createConfig({
   chains: [base, baseSepolia, hardhat],
