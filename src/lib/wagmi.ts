@@ -1,7 +1,7 @@
 import { createConfig, http } from 'wagmi';
 import type { Connector } from 'wagmi';
 import { base, baseSepolia, hardhat } from 'wagmi/chains';
-import { coinbaseWallet, metaMask, walletConnect, okxWallet } from 'wagmi/connectors';
+import { coinbaseWallet, metaMask, walletConnect } from 'wagmi/connectors';
 
 const walletConnectProjectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID as string | undefined;
 const baseRpc = (import.meta.env.VITE_BASE_RPC as string | undefined) ?? 'https://mainnet.base.org';
