@@ -62,7 +62,7 @@ export function useFollow() {
         functionName: 'followerCount',
         args: [user],
       });
-      return BigInt((res as any).toString?.() ?? String(res ?? '0'));
+      return BigInt(String(res ?? '0')) ;
     } catch (err: unknown) {
       console.error('getFollowerCount failed', err);
       return 0n;
@@ -80,7 +80,7 @@ export function useFollow() {
         functionName: 'followingCount',
         args: [user],
       });
-      return BigInt((res as any).toString?.() ?? String(res ?? '0'));
+      return BigInt(String(res ?? '0')) ;
     } catch (err: unknown) {
       console.error('getFollowingCount failed', err);
       return 0n;
