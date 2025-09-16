@@ -6,50 +6,49 @@ export const CONTRACT_ADDRESSES = {
   Follow: import.meta.env.VITE_BASELINE_FOLLOW as string | undefined,
 } as const;
 
-// Contract ABIs (simplified for key functions)
-export const PROFILES_ABI = [
-  'function createProfile(string username, string bio) external',
-  'function updateProfile(string bio) external',
-  'function setAvatar(address nftContract, uint256 nftTokenId) external',
-  'function getProfile(address user) external view returns (tuple(string username, string bio, address nftContract, uint256 nftTokenId, uint256 createdAt, bool exists))',
-  'function hasProfile(address user) external view returns (bool)',
-  'function isUsernameAvailable(string username) external view returns (bool)',
-  'event ProfileCreated(address indexed user, string username)',
-  'event ProfileUpdated(address indexed user, string username, string bio)',
-  'event AvatarUpdated(address indexed user, address nftContract, uint256 nftTokenId)'
+// ABIs provided by the user (full ABIs)
+export const POSTS_ABI = [
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "uint256", "name": "id", "type": "uint256" },
+      { "indexed": true, "internalType": "address", "name": "author", "type": "address" },
+      { "indexed": false, "internalType": "string", "name": "content", "type": "string" },
+      { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" }
+    ],
+    "name": "PostCreated",
+    "type": "event"
+  },
+  { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "uint256", "name": "id", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "liker", "type": "address" } ], "name": "PostLiked", "type": "event" },
+  { "inputs": [ { "internalType": "string", "name": "content", "type": "string" } ], "name": "createPost", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "nonpayable", "type": "function" },
+  { "inputs": [ { "internalType": "uint256", "name": "id", "type": "uint256" } ], "name": "getPost", "outputs": [ { "components": [ { "internalType": "uint256", "name": "id", "type": "uint256" }, { "internalType": "address", "name": "author", "type": "address" }, { "internalType": "string", "name": "content", "type": "string" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" } ], "internalType": "struct Posts.Post", "name": "", "type": "tuple" }, { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" },
+  { "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "likeCounts", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" },
+  { "inputs": [ { "internalType": "uint256", "name": "id", "type": "uint256" } ], "name": "likePost", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
+  { "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "address", "name": "", "type": "address" } ], "name": "liked", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "view", "type": "function" },
+  { "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "posts", "outputs": [ { "internalType": "uint256", "name": "id", "type": "uint256" }, { "internalType": "address", "name": "author", "type": "address" }, { "internalType": "string", "name": "content", "type": "string" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" } ], "stateMutability": "view", "type": "function" }
 ] as const;
 
-export const POSTS_ABI = [
-  'function createPost(string content) external',
-  'function likePost(uint256 postId) external',
-  'function unlikePost(uint256 postId) external',
-  'function getPost(uint256 postId) external view returns (tuple(uint256 id, address author, string content, uint256 timestamp, uint256 likesCount, uint256 commentsCount, bool exists))',
-  'function getUserPosts(address user) external view returns (uint256[])',
-  'function getAllPosts() external view returns (uint256[])',
-  'function hasUserLiked(uint256 postId, address user) external view returns (bool)',
-  'event PostCreated(uint256 indexed postId, address indexed author, string content, uint256 timestamp)',
-  'event PostLiked(uint256 indexed postId, address indexed liker, uint256 newLikesCount)',
-  'event PostUnliked(uint256 indexed postId, address indexed unliker, uint256 newLikesCount)'
+export const PROFILES_ABI = [
+  { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "user", "type": "address" }, { "indexed": false, "internalType": "string", "name": "username", "type": "string" }, { "indexed": false, "internalType": "string", "name": "bio", "type": "string" }, { "indexed": false, "internalType": "address", "name": "avatarContract", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "avatarTokenId", "type": "uint256" } ], "name": "ProfileUpdated", "type": "event" },
+  { "inputs": [ { "internalType": "address", "name": "user", "type": "address" } ], "name": "getProfile", "outputs": [ { "components": [ { "internalType": "address", "name": "user", "type": "address" }, { "internalType": "string", "name": "username", "type": "string" }, { "internalType": "string", "name": "bio", "type": "string" }, { "internalType": "address", "name": "avatarContract", "type": "address" }, { "internalType": "uint256", "name": "avatarTokenId", "type": "uint256" }, { "internalType": "bool", "name": "exists", "type": "bool" } ], "internalType": "struct Profiles.Profile", "name": "", "type": "tuple" } ], "stateMutability": "view", "type": "function" },
+  { "inputs": [ { "internalType": "string", "name": "username", "type": "string" }, { "internalType": "string", "name": "bio", "type": "string" }, { "internalType": "address", "name": "avatarContract", "type": "address" }, { "internalType": "uint256", "name": "avatarTokenId", "type": "uint256" } ], "name": "updateProfile", "outputs": [], "stateMutability": "nonpayable", "type": "function" }
 ] as const;
 
 export const COMMENTS_ABI = [
-  'function createComment(uint256 postId, string content) external',
-  'function likeComment(uint256 commentId) external',
-  'function unlikeComment(uint256 commentId) external',
-  'function getComment(uint256 commentId) external view returns (tuple(uint256 id, uint256 postId, address author, string content, uint256 timestamp, uint256 likesCount, bool exists))',
-  'function getPostComments(uint256 postId) external view returns (uint256[])',
-  'function hasUserLikedComment(uint256 commentId, address user) external view returns (bool)',
-  'event CommentCreated(uint256 indexed commentId, uint256 indexed postId, address indexed author, string content, uint256 timestamp)'
+  { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "uint256", "name": "postId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "commentId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "author", "type": "address" }, { "indexed": false, "internalType": "string", "name": "content", "type": "string" }, { "indexed": false, "internalType": "uint256", "name": "timestamp", "type": "uint256" } ], "name": "CommentAdded", "type": "event" },
+  { "inputs": [ { "internalType": "uint256", "name": "postId", "type": "uint256" }, { "internalType": "string", "name": "content", "type": "string" } ], "name": "addComment", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "nonpayable", "type": "function" },
+  { "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "comments", "outputs": [ { "internalType": "uint256", "name": "id", "type": "uint256" }, { "internalType": "uint256", "name": "postId", "type": "uint256" }, { "internalType": "address", "name": "author", "type": "address" }, { "internalType": "string", "name": "content", "type": "string" }, { "internalType": "uint256", "name": "timestamp", "type": "uint256" } ], "stateMutability": "view", "type": "function" },
+  { "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "commentsByPost", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" },
+  { "inputs": [ { "internalType": "uint256", "name": "postId", "type": "uint256" } ], "name": "getCommentsForPost", "outputs": [ { "internalType": "uint256[]", "name": "", "type": "uint256[]" } ], "stateMutability": "view", "type": "function" }
 ] as const;
 
 export const FOLLOW_ABI = [
-  'function followUser(address target) external',
-  'function unfollowUser(address target) external',
-  'function getFollowers(address user) external view returns (address[])',
-  'function getFollowing(address user) external view returns (address[])',
-  'function getFollowersCount(address user) external view returns (uint256)',
-  'function getFollowingCount(address user) external view returns (uint256)',
-  'function checkIsFollowing(address follower, address target) external view returns (bool)',
-  'event Followed(address indexed follower, address indexed followed)',
-  'event Unfollowed(address indexed follower, address indexed unfollowed)'
+  { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "follower", "type": "address" }, { "indexed": true, "internalType": "address", "name": "following", "type": "address" } ], "name": "Followed", "type": "event" },
+  { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "follower", "type": "address" }, { "indexed": true, "internalType": "address", "name": "followingEvent", "type": "address" } ], "name": "Unfollowed", "type": "event" },
+  { "inputs": [ { "internalType": "address", "name": "user", "type": "address" } ], "name": "followUser", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
+  { "inputs": [ { "internalType": "address", "name": "", "type": "address" } ], "name": "followerCount", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" },
+  { "inputs": [ { "internalType": "address", "name": "", "type": "address" }, { "internalType": "address", "name": "", "type": "address" } ], "name": "following", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "view", "type": "function" },
+  { "inputs": [ { "internalType": "address", "name": "", "type": "address" } ], "name": "followingCount", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" },
+  { "inputs": [ { "internalType": "address", "name": "follower", "type": "address" }, { "internalType": "address", "name": "user", "type": "address" } ], "name": "isFollowing", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "view", "type": "function" },
+  { "inputs": [ { "internalType": "address", "name": "user", "type": "address" } ], "name": "unfollowUser", "outputs": [], "stateMutability": "nonpayable", "type": "function" }
 ] as const;
