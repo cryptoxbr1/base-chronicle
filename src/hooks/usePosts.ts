@@ -127,8 +127,8 @@ export function usePosts() {
 
     try {
       await writeLikePost({
-        address: postsAddr as any,
-        abi: POSTS_ABI as any,
+        address: postsAddr as `0x${string}`,
+        abi: POSTS_ABI as unknown as any,
         functionName: 'likePost',
         args: [BigInt(postId)],
       });
