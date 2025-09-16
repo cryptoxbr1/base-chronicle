@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useConnect, useAccount } from "wagmi";
 import { Wallet, Shield, Zap, ChevronRight } from "lucide-react";
 import { base } from 'wagmi/chains';
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import heroImage from "@/assets/baseline-hero.jpg";
 
 interface ConnectWalletProps {
