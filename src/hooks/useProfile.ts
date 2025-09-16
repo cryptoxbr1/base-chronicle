@@ -1,4 +1,5 @@
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import React, { useState, useEffect, useCallback } from 'react';
 import { CONTRACT_ADDRESSES, PROFILES_ABI } from '@/lib/contracts';
 import { toast } from 'sonner';
 
