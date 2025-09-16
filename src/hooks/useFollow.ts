@@ -19,7 +19,7 @@ export function useFollow() {
     try {
       await writeFollow({
         address: followAddr as `0x${string}`,
-        abi: FOLLOW_ABI as unknown as any,
+        abi: FOLLOW_ABI as unknown as import('abitype').Abi,
         functionName: 'followUser',
         args: [target],
       });
@@ -40,7 +40,7 @@ export function useFollow() {
     try {
       await writeUnfollow({
         address: followAddr as `0x${string}`,
-        abi: FOLLOW_ABI as unknown as any,
+        abi: FOLLOW_ABI as unknown as import('abitype').Abi,
         functionName: 'unfollowUser',
         args: [target],
       });
@@ -58,7 +58,7 @@ export function useFollow() {
     try {
       const res: unknown = await publicClient.readContract({
         address: followAddr as `0x${string}`,
-        abi: FOLLOW_ABI as unknown as any,
+        abi: FOLLOW_ABI as unknown as import('abitype').Abi,
         functionName: 'getFollowers',
         args: [user],
       });
@@ -76,7 +76,7 @@ export function useFollow() {
     try {
       const res: unknown = await publicClient.readContract({
         address: followAddr as `0x${string}`,
-        abi: FOLLOW_ABI as unknown as any,
+        abi: FOLLOW_ABI as unknown as import('abitype').Abi,
         functionName: 'getFollowing',
         args: [user],
       });
