@@ -80,9 +80,9 @@ export function usePosts() {
       // sort by timestamp desc
       items.sort((a, b) => b.timestamp - a.timestamp);
       setPosts(items);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to fetch posts', err);
-      setError((err && err.message) || 'Failed to fetch posts');
+      setError((err as { message?: string })?.message ?? 'Failed to fetch posts');
     } finally {
       setIsLoading(false);
     }
