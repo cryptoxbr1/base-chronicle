@@ -16,8 +16,8 @@ export function useComments() {
 
     try {
       await writeCreateComment({
-        address: commentsAddr as any,
-        abi: COMMENTS_ABI as any,
+        address: commentsAddr as `0x${string}`,
+        abi: COMMENTS_ABI as unknown as any,
         functionName: 'createComment',
         args: [BigInt(postId), content],
       });
