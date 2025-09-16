@@ -118,7 +118,11 @@ const Feed = ({ activeTab }: FeedProps) => {
       case 'trending':
         return [...posts].sort((a, b) => b.likes - a.likes);
       case 'explore':
-        return [...posts].sort((a, b) => (b.timestamp as any).getTime() - (a.timestamp as any).getTime());
+        return [...posts].sort((a, b) => {
+          const ta = typeof a.timestamp === 'number' ? a.timestamp : a.timestamp.getTime();
+          const tb = typeof b.timestamp === 'number' ? b.timestamp : b.timestamp.getTime();
+          return tb - ta;
+        });
       default:
         return posts;
     }
