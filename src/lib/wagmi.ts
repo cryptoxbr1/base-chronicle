@@ -1,5 +1,6 @@
 import { createConfig, http } from 'wagmi';
 import { createConfig, http } from 'wagmi';
+import type { Connector } from 'wagmi';
 import { base, baseSepolia, hardhat } from 'wagmi/chains';
 import { coinbaseWallet, metaMask, walletConnect, okxWallet } from 'wagmi/connectors';
 
