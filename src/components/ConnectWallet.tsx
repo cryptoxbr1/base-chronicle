@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useConnect, useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import { Wallet, Shield, Zap, ChevronRight } from "lucide-react";
+import { base } from 'wagmi/chains';
 import { useEffect } from "react";
 import heroImage from "@/assets/baseline-hero.jpg";
 
