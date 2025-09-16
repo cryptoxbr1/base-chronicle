@@ -189,6 +189,12 @@ export function usePosts() {
     }
 
     try {
+      if (useMock) {
+        setPosts((p) => p.map((post) => post.id === postId ? { ...post, isLiked: true, likes: post.likes + 1 } : post));
+        toast.success('Liked (demo)');
+        return;
+      }
+
       await writeLikePost({
         address: postsAddr as `0x${string}`,
         abi: POSTS_ABI as unknown as Abi,
@@ -202,7 +208,7 @@ export function usePosts() {
       console.error('like failed', err);
       toast.error('Failed to like');
     }
-  }, [writeLikePost, fetchPosts]);
+  }, [writeLikePost, fetchPosts, useMock]);
 
   const unlikePost = useCallback(async (postId: string) => {
     const postsAddr = CONTRACT_ADDRESSES.Posts;
