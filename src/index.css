@@ -2,41 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* BaseLine Web3 Design System - Base Mainnet Inspired */
 
 @layer base {
   :root {
+    /* Core Brand Colors - Base Mainnet Theme */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 222 84% 4.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222 84% 4.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 222 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Base Blue Primary */
+    --primary: 218 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 223 87% 57%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary Accent */
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 218 100% 95%;
+    --accent-foreground: 218 100% 20%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 218 100% 50%;
 
-    --radius: 0.5rem;
+    /* Web3 Specific Colors */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 98%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(218 100% 50%), hsl(223 87% 57%));
+    --gradient-secondary: linear-gradient(135deg, hsl(210 40% 96%), hsl(214 32% 91%));
+    --gradient-accent: linear-gradient(45deg, hsl(218 100% 50%), hsl(272 83% 58%));
+    
+    /* Shadows */
+    --shadow-soft: 0 2px 20px -2px hsl(218 100% 50% / 0.1);
+    --shadow-medium: 0 8px 30px -6px hsl(218 100% 50% / 0.15);
+    --shadow-strong: 0 16px 40px -8px hsl(218 100% 50% / 0.2);
+
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -56,41 +74,45 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    /* Dark Mode - Base Mainnet Theme */
+    --background: 222 47% 4%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 222 47% 6%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 222 47% 6%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 218 100% 60%;
+    --primary-foreground: 222 47% 4%;
+    --primary-hover: 223 87% 67%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 217 32% 17%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 217 32% 15%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 218 100% 15%;
+    --accent-foreground: 218 100% 80%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 218 100% 60%;
+
+    /* Dark Mode Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(218 100% 60%), hsl(223 87% 67%));
+    --gradient-secondary: linear-gradient(135deg, hsl(217 32% 17%), hsl(217 32% 15%));
+    --gradient-accent: linear-gradient(45deg, hsl(218 100% 60%), hsl(272 83% 68%));
+    
+    /* Dark Mode Shadows */
+    --shadow-soft: 0 2px 20px -2px hsl(218 100% 60% / 0.2);
+    --shadow-medium: 0 8px 30px -6px hsl(218 100% 60% / 0.25);
+    --shadow-strong: 0 16px 40px -8px hsl(218 100% 60% / 0.3);
   }
 }
 
@@ -100,6 +122,180 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Web3 Button Variants */
+  .btn-gradient {
+    @apply bg-gradient-to-r from-primary to-primary-hover text-primary-foreground;
+    @apply shadow-lg hover:shadow-xl transition-all duration-300;
+    @apply border-0 hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-web3 {
+    @apply relative overflow-hidden;
+    @apply before:absolute before:inset-0 before:bg-gradient-to-r before:from-primary before:to-primary-hover;
+    @apply before:opacity-0 before:transition-opacity before:duration-300;
+    @apply hover:before:opacity-100;
+  }
+
+  /* Card Variants */
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:scale-[1.01];
+    @apply hover:border-primary/20;
+  }
+
+  .card-glow {
+    @apply relative;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .card-glow::before {
+    @apply absolute inset-0 rounded-lg opacity-0 transition-opacity duration-300;
+    content: '';
+    background: var(--gradient-primary);
+    z-index: -1;
+  }
+
+  .card-glow:hover::before {
+    @apply opacity-10;
+  }
+
+  /* Web3 Gradient Text */
+  .gradient-text {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Blurred Development Section */
+  .blur-development {
+    @apply relative;
+    filter: blur(2px);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .blur-development::after {
+    @apply absolute inset-0 bg-muted/20 rounded-lg flex items-center justify-center;
+    content: 'Under Development';
+    @apply text-muted-foreground font-semibold backdrop-blur-sm;
+    filter: none;
+  }
+
+  /* Connection Status */
+  .connection-dot {
+    @apply w-2 h-2 rounded-full;
+    @apply bg-success animate-pulse;
+  }
+
+  /* NFT Avatar Container */
+  .nft-avatar {
+    @apply relative rounded-full overflow-hidden;
+    @apply ring-2 ring-primary/20 hover:ring-primary/40 transition-all duration-300;
+  }
+
+  /* Post Card Animation */
+  .post-card {
+    @apply transform transition-all duration-300 hover:scale-[1.01];
+    @apply hover:shadow-md border border-border/50 hover:border-primary/30;
+  }
+}
+
+@layer utilities {
+  /* Animation Utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+
+  .animate-bounce-in {
+    animation: bounceIn 0.6s ease-out;
+  }
+
+  /* Gradient Utilities */
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .bg-gradient-secondary {
+    background: var(--gradient-secondary);
+  }
+
+  .bg-gradient-accent {
+    background: var(--gradient-accent);
+  }
+
+  /* Shadow Utilities */
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-medium {
+    box-shadow: var(--shadow-medium);
+  }
+
+  .shadow-strong {
+    box-shadow: var(--shadow-strong);
+  }
+
+  /* Interactive States */
+  .interactive {
+    @apply transition-all duration-300 cursor-pointer;
+    @apply hover:scale-105 active:scale-95;
+  }
+
+  .glass-effect {
+    @apply bg-background/80 backdrop-blur-lg border border-border/50;
+  }
+}
+
+/* Keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
