@@ -121,7 +121,7 @@ export function usePosts() {
       const wait = new Promise((res) => setTimeout(res, 1200));
       await wait;
       await fetchPosts();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('createPost failed', err);
       toast.error('Failed to create post');
       throw err;
