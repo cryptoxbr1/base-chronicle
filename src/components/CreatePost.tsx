@@ -37,8 +37,8 @@ const CreatePost = ({ onPost }: CreatePostProps) => {
     setIsPosting(true);
     try {
       const res = onPost ? onPost(content) : null;
-      if (res && typeof (res as any).then === 'function') {
-        await res;
+      if (res && typeof (res as { then?: unknown }).then === 'function') {
+        await res as Promise<unknown>;
       } else {
         // fallback simulated tx
         await new Promise(resolve => setTimeout(resolve, 1000));
