@@ -61,7 +61,7 @@ const ConnectWallet = ({ onConnect }: ConnectWalletProps) => {
     };
 
     ensureBase();
-  }, [isConnected, chain?.id, switchNetwork, baseRpc]);
+  }, [isConnected, baseRpc]);
 
   const wallets = [];
 
