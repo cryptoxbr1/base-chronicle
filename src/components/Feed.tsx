@@ -12,7 +12,7 @@ interface Post {
   author: string;
   username?: string;
   content: string;
-  timestamp: Date;
+  timestamp: number | Date;
   likes: number;
   comments: number;
   reposts: number;
