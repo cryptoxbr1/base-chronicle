@@ -112,7 +112,7 @@ export function usePosts() {
     try {
       await writeCreatePost({
         address: postsAddr as `0x${string}`,
-        abi: POSTS_ABI as unknown as any,
+        abi: POSTS_ABI as unknown as Abi,
         functionName: 'createPost',
         args: [content],
       });
