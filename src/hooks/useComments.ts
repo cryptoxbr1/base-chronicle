@@ -32,9 +32,9 @@ export function useComments() {
     const commentsAddr = CONTRACT_ADDRESSES.Comments;
     if (!commentsAddr) return [];
     try {
-      const ids: any = await publicClient.readContract({
-        address: commentsAddr as any,
-        abi: COMMENTS_ABI as any,
+      const ids: unknown = await publicClient.readContract({
+        address: commentsAddr as `0x${string}`,
+        abi: COMMENTS_ABI as unknown as any,
         functionName: 'getPostComments',
         args: [BigInt(postId)],
       });
@@ -42,12 +42,12 @@ export function useComments() {
       if (!Array.isArray(ids)) return [];
 
       const items = await Promise.all(
-        ids.map(async (id: any) => {
-          const raw = await publicClient.readContract({
-            address: commentsAddr as any,
-            abi: COMMENTS_ABI as any,
+        ids.map(async (id: unknown) => {
+          const raw: unknown = await publicClient.readContract({
+            address: commentsAddr as `0x${string}`,
+            abi: COMMENTS_ABI as unknown as any,
             functionName: 'getComment',
-            args: [id],
+            args: [id as any],
           });
 
           return {
