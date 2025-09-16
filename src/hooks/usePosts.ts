@@ -44,21 +44,21 @@ export function usePosts() {
     }
 
     try {
-      const ids: any = await publicClient.readContract({
-        address: postsAddr as any,
-        abi: POSTS_ABI as any,
+      const ids: unknown = await publicClient.readContract({
+        address: postsAddr as `0x${string}`,
+        abi: POSTS_ABI as unknown as any,
         functionName: 'getAllPosts',
       });
 
-      const idsArr: any[] = Array.isArray(ids) ? ids : [];
+      const idsArr: unknown[] = Array.isArray(ids) ? (ids as unknown[]) : [];
 
       const items = await Promise.all(
-        idsArr.map(async (id: any) => {
-          const raw = await publicClient.readContract({
-            address: postsAddr as any,
-            abi: POSTS_ABI as any,
+        idsArr.map(async (id: unknown) => {
+          const raw: unknown = await publicClient.readContract({
+            address: postsAddr as `0x${string}`,
+            abi: POSTS_ABI as unknown as any,
             functionName: 'getPost',
-            args: [id],
+            args: [id as any],
           });
 
           // raw expected: [id, author, content, timestamp, likesCount, commentsCount, exists]
