@@ -1,8 +1,10 @@
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
 import { useConnect, useAccount } from "wagmi";
 import { Wallet, Shield, Zap, ChevronRight } from "lucide-react";
-import { useEffect } from "react";
+import { base } from 'wagmi/chains';
+import React, { useEffect } from "react";
 import heroImage from "@/assets/baseline-hero.jpg";
 
 interface ConnectWalletProps {
@@ -12,12 +14,54 @@ interface ConnectWalletProps {
 const ConnectWallet = ({ onConnect }: ConnectWalletProps) => {
   const { connectors, connect } = useConnect();
   const { isConnected } = useAccount();
+  const baseRpc = (import.meta.env.VITE_BASE_RPC as string | undefined) ?? 'https://mainnet.base.org';
 
   useEffect(() => {
     if (isConnected) {
       onConnect();
     }
   }, [isConnected, onConnect]);
+
+  useEffect(() => {
+    if (!isConnected) return;
+
+    const ensureBase = async () => {
+      try {
+        const ethereum = (window as any).ethereum;
+        if (!ethereum?.request) {
+          try { (await import('sonner')).toast.error('No Ethereum provider available to switch networks'); } catch { /* ignore */ }
+          return;
+        }
+
+        const currentChainHex = await ethereum.request({ method: 'eth_chainId' }) as string;
+        const currentChainId = parseInt(currentChainHex, 16);
+        if (currentChainId === base.id) return;
+
+        await ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: '0x' + base.id.toString(16),
+            chainName: 'Base Mainnet',
+            rpcUrls: [baseRpc],
+            nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+            blockExplorerUrls: ['https://base.blockscout.com/'],
+          }],
+        });
+
+        await ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x' + base.id.toString(16) }],
+        });
+
+        try { (await import('sonner')).toast.success('Switched to Base Mainnet'); } catch { /* ignore */ }
+      } catch (err) {
+        console.error('Network switch failed', err);
+        try { (await import('sonner')).toast.error('Please switch your wallet to Base Mainnet'); } catch { /* ignore */ }
+      }
+    };
+
+    ensureBase();
+  }, [isConnected, baseRpc]);
 
   const wallets = [];
 
@@ -34,7 +78,7 @@ const ConnectWallet = ({ onConnect }: ConnectWalletProps) => {
           {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-2xl mb-4 shadow-medium">
-              <span className="text-2xl">⚡</span>
+              <span className="text-3xl font-bold text-primary-foreground">B</span>
             </div>
             <h1 className="text-4xl font-bold mb-2">
               Welcome to <span className="gradient-text">BaseLine</span>
@@ -61,26 +105,40 @@ const ConnectWallet = ({ onConnect }: ConnectWalletProps) => {
 
           <Card className="p-6 card-glow glass-effect">
             <h3 className="text-xl font-semibold mb-4 text-center">Connect Your Wallet</h3>
+
             <div className="space-y-3">
-              {connectors.map((connector) => (
-                <Button
-                  key={connector.uid}
-                  variant="default"
-                  size="lg"
-                  className="w-full justify-between group btn-gradient"
-                  onClick={() => connect({ connector })}
-                  disabled={!connector.ready}
-                >
-                  <div className="flex items-center gap-3">
-                    <Wallet className="w-5 h-5" />
-                    <div className="text-left">
-                      <div className="font-semibold">{connector.name}</div>
-                      <div className="text-sm opacity-80">Connect with {connector.name}</div>
-                    </div>
+              <Button
+                variant="default"
+                size="lg"
+                className="w-full justify-center group btn-gradient"
+                onClick={async () => {
+                  // Preferred wallet order
+                  const preferred = ["MetaMask", "Coinbase Wallet"];
+                  const findPreferred = connectors.find((c) => preferred.some((p) => c.name.toLowerCase().includes(p.toLowerCase())));
+                  const fallback = connectors.find((c) => c.ready) || connectors[0];
+                  const target = findPreferred || fallback;
+                  if (!target) {
+                    // show fallback message
+                    try { (await import('sonner')).toast.error('No wallet connectors available'); } catch { console.warn('No sonner available'); }
+                    return;
+                  }
+
+                  try {
+                    connect({ connector: target });
+                  } catch (err) {
+                    console.error('Connect failed', err);
+                    try { (await import('sonner')).toast.error('Failed to connect wallet'); } catch { console.warn('No sonner available'); }
+                  }
+                }}
+              >
+                <div className="flex items-center gap-3">
+                  <Wallet className="w-5 h-5" />
+                  <div className="text-left">
+                    <div className="font-semibold">Connect Wallet</div>
+                    <div className="text-sm opacity-80">MetaMask · Coinbase Wallet · OKX</div>
                   </div>
-                  <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              ))}
+                </div>
+              </Button>
             </div>
 
             <div className="mt-6 text-center">
@@ -90,13 +148,6 @@ const ConnectWallet = ({ onConnect }: ConnectWalletProps) => {
             </div>
           </Card>
 
-          {/* Network Info */}
-          <div className="mt-6 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent/50 rounded-full text-sm glass-effect">
-              <div className="connection-dot"></div>
-              <span>Base Mainnet (Chain ID: 8453)</span>
-            </div>
-          </div>
         </div>
       </div>
     </div>
