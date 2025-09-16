@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-import { useConnect, useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { useConnect, useAccount } from "wagmi";
 import { Wallet, Shield, Zap, ChevronRight } from "lucide-react";
 import { base } from 'wagmi/chains';
 import { useEffect } from "react";
@@ -14,8 +14,6 @@ interface ConnectWalletProps {
 const ConnectWallet = ({ onConnect }: ConnectWalletProps) => {
   const { connectors, connect } = useConnect();
   const { isConnected } = useAccount();
-  const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
   const baseRpc = (import.meta.env.VITE_BASE_RPC as string | undefined) ?? 'https://mainnet.base.org';
 
   useEffect(() => {
@@ -28,18 +26,16 @@ const ConnectWallet = ({ onConnect }: ConnectWalletProps) => {
     if (!isConnected) return;
 
     const ensureBase = async () => {
-      if (chain?.id === base.id) return;
       try {
-        if (switchNetwork) {
-          switchNetwork(base.id);
-          return;
-        }
-
         const ethereum = (window as any).ethereum;
         if (!ethereum?.request) {
           try { (await import('sonner')).toast.error('No Ethereum provider available to switch networks'); } catch { /* ignore */ }
           return;
         }
+
+        const currentChainHex = await ethereum.request({ method: 'eth_chainId' }) as string;
+        const currentChainId = parseInt(currentChainHex, 16);
+        if (currentChainId === base.id) return;
 
         await ethereum.request({
           method: 'wallet_addEthereumChain',
