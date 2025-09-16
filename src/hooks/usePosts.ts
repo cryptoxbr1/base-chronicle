@@ -51,6 +51,8 @@ export function usePosts() {
   const { writeContract: writeLikePost, data: likeHash } = useWriteContract();
   const { writeContract: writeUnlikePost, data: unlikeHash } = useWriteContract();
 
+  const { connectors, connect } = useConnect();
+
   const { isLoading: isCreating } = useWaitForTransactionReceipt({ hash: createHash });
   const { isLoading: isLiking } = useWaitForTransactionReceipt({ hash: likeHash });
   const { isLoading: isUnliking } = useWaitForTransactionReceipt({ hash: unlikeHash });
