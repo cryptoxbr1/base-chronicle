@@ -51,46 +51,65 @@ export function useFollow() {
     }
   }, [writeUnfollow]);
 
-  const getFollowers = useCallback(async (user: string) => {
+  const getFollowerCount = useCallback(async (user: string) => {
     const followAddr = CONTRACT_ADDRESSES.Follow;
-    if (!followAddr) return [];
+    if (!followAddr) return 0n;
 
     try {
       const res: unknown = await publicClient.readContract({
         address: followAddr as `0x${string}`,
         abi: FOLLOW_ABI as unknown as import('abitype').Abi,
-        functionName: 'getFollowers',
+        functionName: 'followerCount',
         args: [user],
       });
-      return Array.isArray(res) ? (res as unknown[]) : [];
+      return BigInt((res as any).toString?.() ?? String(res ?? '0'));
     } catch (err: unknown) {
-      console.error('getFollowers failed', err);
-      return [];
+      console.error('getFollowerCount failed', err);
+      return 0n;
     }
   }, [publicClient]);
 
-  const getFollowing = useCallback(async (user: string) => {
+  const getFollowingCount = useCallback(async (user: string) => {
     const followAddr = CONTRACT_ADDRESSES.Follow;
-    if (!followAddr) return [];
+    if (!followAddr) return 0n;
 
     try {
       const res: unknown = await publicClient.readContract({
         address: followAddr as `0x${string}`,
         abi: FOLLOW_ABI as unknown as import('abitype').Abi,
-        functionName: 'getFollowing',
+        functionName: 'followingCount',
         args: [user],
       });
-      return Array.isArray(res) ? (res as unknown[]) : [];
+      return BigInt((res as any).toString?.() ?? String(res ?? '0'));
     } catch (err: unknown) {
-      console.error('getFollowing failed', err);
-      return [];
+      console.error('getFollowingCount failed', err);
+      return 0n;
+    }
+  }, [publicClient]);
+
+  const isFollowing = useCallback(async (follower: string, user: string) => {
+    const followAddr = CONTRACT_ADDRESSES.Follow;
+    if (!followAddr) return false;
+
+    try {
+      const res: unknown = await publicClient.readContract({
+        address: followAddr as `0x${string}`,
+        abi: FOLLOW_ABI as unknown as import('abitype').Abi,
+        functionName: 'isFollowing',
+        args: [follower, user],
+      });
+      return Boolean(res as boolean);
+    } catch (err: unknown) {
+      console.error('isFollowing failed', err);
+      return false;
     }
   }, [publicClient]);
 
   return {
     followUser,
     unfollowUser,
-    getFollowers,
-    getFollowing,
+    getFollowerCount,
+    getFollowingCount,
+    isFollowing,
   };
 }
