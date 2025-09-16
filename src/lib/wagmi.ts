@@ -28,7 +28,7 @@ const connectors = [
         }),
       ]
     : []),
-].filter(Boolean) as any[];
+].filter(Boolean) as unknown as Connector[];
 
 export const config = createConfig({
   chains: [base, baseSepolia, hardhat],
