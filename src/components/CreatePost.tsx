@@ -33,13 +33,23 @@ const CreatePost = ({ onPost }: CreatePostProps) => {
 
   const handlePost = async () => {
     if (!content.trim() || isPosting) return;
-    
+
     setIsPosting(true);
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate blockchain tx
-    onPost(content);
-    setContent("");
-    setCharCount(0);
-    setIsPosting(false);
+    try {
+      const res = onPost ? onPost(content) : null;
+      if (res && typeof (res as any).then === 'function') {
+        await res;
+      } else {
+        // fallback simulated tx
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      setContent("");
+      setCharCount(0);
+    } catch (err) {
+      console.error('Post failed', err);
+    } finally {
+      setIsPosting(false);
+    }
   };
 
   const getCharCountColor = () => {
