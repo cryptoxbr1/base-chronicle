@@ -135,6 +135,22 @@ export function usePosts() {
     }
 
     try {
+      if (useMock) {
+        // simulate tx in mock mode
+        const newPost: Post = {
+          id: Date.now().toString(),
+          author: connected ?? '0xdemo',
+          content,
+          timestamp: Date.now(),
+          likes: 0,
+          comments: 0,
+          reposts: 0,
+        };
+        setPosts((p) => [newPost, ...p]);
+        toast.success('Post created (demo)');
+        return;
+      }
+
       await writeCreatePost({
         address: postsAddr as `0x${string}`,
         abi: POSTS_ABI as unknown as Abi,
@@ -148,8 +164,20 @@ export function usePosts() {
       await fetchPosts();
     } catch (err: unknown) {
       console.error('createPost failed', err);
-      toast.error('Failed to create post');
-      throw err;
+      toast.error('Failed to create post, switched to demo mode');
+      setUseMock(true);
+      // fallback to local mock post
+      const newPost: Post = {
+        id: Date.now().toString(),
+        author: connected ?? '0xdemo',
+        content,
+        timestamp: Date.now(),
+        likes: 0,
+        comments: 0,
+        reposts: 0,
+      };
+      setPosts((p) => [newPost, ...p]);
+      return;
     }
   }, [writeCreatePost, fetchPosts]);
 
