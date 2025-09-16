@@ -69,7 +69,7 @@ const ConnectWallet = ({ onConnect }: ConnectWalletProps) => {
                 className="w-full justify-center group btn-gradient"
                 onClick={async () => {
                   // Preferred wallet order
-                  const preferred = ["MetaMask", "Coinbase Wallet", "OKX", "OKX Wallet", "OKX Wallet Provider"];
+                  const preferred = ["MetaMask", "Coinbase Wallet"];
                   const findPreferred = connectors.find((c) => preferred.some((p) => c.name.toLowerCase().includes(p.toLowerCase())));
                   const fallback = connectors.find((c) => c.ready) || connectors[0];
                   const target = findPreferred || fallback;
