@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
+    "deploy": "npx hardhat run scripts/deploy.js",
+    "deploy:base": "npx hardhat run scripts/deploy.js --network base",
+    "deploy:base-sepolia": "npx hardhat run scripts/deploy.js --network base-sepolia",
+    "deploy:local": "npx hardhat run scripts/deploy.js --network hardhat",
+    "node": "npx hardhat node",
+    "clean": "npx hardhat clean",
+    "verify": "npx hardhat verify"
+  }
+}

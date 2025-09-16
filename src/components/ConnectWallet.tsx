@@ -1,7 +1,8 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useConnect, useAccount } from "wagmi";
 import { Wallet, Shield, Zap, ChevronRight } from "lucide-react";
+import { useEffect } from "react";
 import heroImage from "@/assets/baseline-hero.jpg";
 
 interface ConnectWalletProps {
@@ -9,36 +10,16 @@ interface ConnectWalletProps {
 }
 
 const ConnectWallet = ({ onConnect }: ConnectWalletProps) => {
-  const [isConnecting, setIsConnecting] = useState(false);
+  const { connectors, connect } = useConnect();
+  const { isConnected } = useAccount();
 
-  const handleConnect = async (walletType: string) => {
-    setIsConnecting(true);
-    // Simulate wallet connection
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsConnecting(false);
-    onConnect();
-  };
-
-  const wallets = [
-    {
-      name: "MetaMask",
-      description: "Most popular Ethereum wallet",
-      icon: "🦊",
-      primary: true
-    },
-    {
-      name: "Base Wallet",
-      description: "Native Base chain wallet",
-      icon: "🔷",
-      primary: true
-    },
-    {
-      name: "WalletConnect",
-      description: "Connect with mobile wallets",
-      icon: "📱",
-      primary: false
+  useEffect(() => {
+    if (isConnected) {
+      onConnect();
     }
-  ];
+  }, [isConnected, onConnect]);
+
+  const wallets = [];
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
@@ -78,26 +59,23 @@ const ConnectWallet = ({ onConnect }: ConnectWalletProps) => {
             ))}
           </div>
 
-          {/* Wallet Options */}
           <Card className="p-6 card-glow glass-effect">
             <h3 className="text-xl font-semibold mb-4 text-center">Connect Your Wallet</h3>
             <div className="space-y-3">
-              {wallets.map((wallet, index) => (
+              {connectors.map((connector) => (
                 <Button
-                  key={index}
-                  variant={wallet.primary ? "default" : "outline"}
+                  key={connector.uid}
+                  variant="default"
                   size="lg"
-                  className={`w-full justify-between group ${
-                    wallet.primary ? 'btn-gradient' : 'hover:bg-accent'
-                  }`}
-                  onClick={() => handleConnect(wallet.name)}
-                  disabled={isConnecting}
+                  className="w-full justify-between group btn-gradient"
+                  onClick={() => connect({ connector })}
+                  disabled={!connector.ready}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-xl">{wallet.icon}</span>
+                    <Wallet className="w-5 h-5" />
                     <div className="text-left">
-                      <div className="font-semibold">{wallet.name}</div>
-                      <div className="text-sm opacity-80">{wallet.description}</div>
+                      <div className="font-semibold">{connector.name}</div>
+                      <div className="text-sm opacity-80">Connect with {connector.name}</div>
                     </div>
                   </div>
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
