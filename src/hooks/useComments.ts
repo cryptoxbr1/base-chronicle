@@ -34,7 +34,7 @@ export function useComments() {
     try {
       const ids: unknown = await publicClient.readContract({
         address: commentsAddr as `0x${string}`,
-        abi: COMMENTS_ABI as unknown as any,
+        abi: COMMENTS_ABI as unknown as import('abitype').Abi,
         functionName: 'getPostComments',
         args: [BigInt(postId)],
       });
@@ -42,21 +42,30 @@ export function useComments() {
       if (!Array.isArray(ids)) return [];
 
       const items = await Promise.all(
-        ids.map(async (id: unknown) => {
+        (ids as unknown[]).map(async (id: unknown) => {
           const raw: unknown = await publicClient.readContract({
             address: commentsAddr as `0x${string}`,
-            abi: COMMENTS_ABI as unknown as any,
+            abi: COMMENTS_ABI as unknown as import('abitype').Abi,
             functionName: 'getComment',
-            args: [id as any],
+            args: [id as unknown],
           });
 
+          const arr = raw as unknown as [
+            bigint | number | string,
+            bigint | number | string,
+            string,
+            string,
+            bigint | number,
+            bigint | number
+          ];
+
           return {
-            id: raw[0]?.toString(),
-            postId: raw[1]?.toString(),
-            author: raw[2],
-            content: raw[3],
-            timestamp: Number(raw[4] ?? Date.now()),
-            likes: Number(raw[5] ?? 0),
+            id: arr[0]?.toString(),
+            postId: arr[1]?.toString(),
+            author: arr[2],
+            content: arr[3],
+            timestamp: Number(arr[4] ?? Date.now()),
+            likes: Number(arr[5] ?? 0),
           };
         })
       );
