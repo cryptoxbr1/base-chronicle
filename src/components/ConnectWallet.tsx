@@ -14,12 +14,58 @@ interface ConnectWalletProps {
 const ConnectWallet = ({ onConnect }: ConnectWalletProps) => {
   const { connectors, connect } = useConnect();
   const { isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork();
+  const baseRpc = (import.meta.env.VITE_BASE_RPC as string | undefined) ?? 'https://mainnet.base.org';
 
   useEffect(() => {
     if (isConnected) {
       onConnect();
     }
   }, [isConnected, onConnect]);
+
+  useEffect(() => {
+    if (!isConnected) return;
+
+    const ensureBase = async () => {
+      if (chain?.id === base.id) return;
+      try {
+        if (switchNetwork) {
+          switchNetwork(base.id);
+          return;
+        }
+
+        const ethereum = (window as any).ethereum;
+        if (!ethereum?.request) {
+          try { (await import('sonner')).toast.error('No Ethereum provider available to switch networks'); } catch { /* ignore */ }
+          return;
+        }
+
+        await ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: '0x' + base.id.toString(16),
+            chainName: 'Base Mainnet',
+            rpcUrls: [baseRpc],
+            nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+            blockExplorerUrls: ['https://base.blockscout.com/'],
+          }],
+        });
+
+        await ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x' + base.id.toString(16) }],
+        });
+
+        try { (await import('sonner')).toast.success('Switched to Base Mainnet'); } catch { /* ignore */ }
+      } catch (err) {
+        console.error('Network switch failed', err);
+        try { (await import('sonner')).toast.error('Please switch your wallet to Base Mainnet'); } catch { /* ignore */ }
+      }
+    };
+
+    ensureBase();
+  }, [isConnected, chain?.id, switchNetwork, baseRpc]);
 
   const wallets = [];
 
