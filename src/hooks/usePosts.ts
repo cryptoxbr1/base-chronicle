@@ -138,14 +138,14 @@ export function usePosts() {
     try {
       await writeLikePost({
         address: postsAddr as `0x${string}`,
-        abi: POSTS_ABI as unknown as any,
+        abi: POSTS_ABI as unknown as Abi,
         functionName: 'likePost',
         args: [BigInt(postId)],
       });
       toast.success('Like tx submitted');
       await new Promise((res) => setTimeout(res, 800));
       await fetchPosts();
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('like failed', err);
       toast.error('Failed to like');
     }
