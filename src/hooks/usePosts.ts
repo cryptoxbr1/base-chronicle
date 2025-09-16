@@ -24,6 +24,7 @@ export function usePosts() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [useMock, setUseMock] = useState(false);
 
   const { writeContract: writeCreatePost, data: createHash } = useWriteContract();
   const { writeContract: writeLikePost, data: likeHash } = useWriteContract();
@@ -32,6 +33,27 @@ export function usePosts() {
   const { isLoading: isCreating } = useWaitForTransactionReceipt({ hash: createHash });
   const { isLoading: isLiking } = useWaitForTransactionReceipt({ hash: likeHash });
   const { isLoading: isUnliking } = useWaitForTransactionReceipt({ hash: unlikeHash });
+
+  const mockPosts: Post[] = [
+    {
+      id: 'mock-1',
+      author: '0xmock...1',
+      content: 'Welcome to BaseLine! This is a demo post.',
+      timestamp: Date.now() - 1000 * 60 * 5,
+      likes: 5,
+      comments: 1,
+      reposts: 0,
+    },
+    {
+      id: 'mock-2',
+      author: '0xmock...2',
+      content: 'This platform is running in demo mode — on-chain contract calls failed.',
+      timestamp: Date.now() - 1000 * 60 * 60,
+      likes: 12,
+      comments: 3,
+      reposts: 1,
+    },
+  ];
 
   const fetchPosts = useCallback(async () => {
     setIsLoading(true);
