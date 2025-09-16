@@ -5,9 +5,9 @@ import { toast } from 'sonner';
 
 export function useComments() {
   const publicClient = usePublicClient();
-  const { writeContract: writeCreateComment } = useWriteContract();
+  const { writeContract: writeAddComment } = useWriteContract();
 
-  const createComment = useCallback(async (postId: string, content: string) => {
+  const addComment = useCallback(async (postId: string, content: string) => {
     const commentsAddr = CONTRACT_ADDRESSES.Comments;
     if (!commentsAddr) {
       toast.error('Comments contract not configured');
@@ -15,27 +15,27 @@ export function useComments() {
     }
 
     try {
-      await writeCreateComment({
+      await writeAddComment({
         address: commentsAddr as `0x${string}`,
         abi: COMMENTS_ABI as unknown as import('abitype').Abi,
-        functionName: 'createComment',
+        functionName: 'addComment',
         args: [BigInt(postId), content],
       });
       toast.success('Comment tx submitted');
-    } catch (err) {
-      console.error('createComment failed', err);
+    } catch (err: unknown) {
+      console.error('addComment failed', err);
       toast.error('Failed to create comment');
     }
-  }, [writeCreateComment]);
+  }, [writeAddComment]);
 
-  const getPostComments = useCallback(async (postId: string) => {
+  const getCommentsForPost = useCallback(async (postId: string) => {
     const commentsAddr = CONTRACT_ADDRESSES.Comments;
     if (!commentsAddr) return [];
     try {
       const ids: unknown = await publicClient.readContract({
         address: commentsAddr as `0x${string}`,
         abi: COMMENTS_ABI as unknown as import('abitype').Abi,
-        functionName: 'getPostComments',
+        functionName: 'getCommentsForPost',
         args: [BigInt(postId)],
       });
 
@@ -46,7 +46,7 @@ export function useComments() {
           const raw: unknown = await publicClient.readContract({
             address: commentsAddr as `0x${string}`,
             abi: COMMENTS_ABI as unknown as import('abitype').Abi,
-            functionName: 'getComment',
+            functionName: 'comments',
             args: [id as unknown],
           });
 
@@ -55,7 +55,6 @@ export function useComments() {
             bigint | number | string,
             string,
             string,
-            bigint | number,
             bigint | number
           ];
 
@@ -65,20 +64,20 @@ export function useComments() {
             author: arr[2],
             content: arr[3],
             timestamp: Number(arr[4] ?? Date.now()),
-            likes: Number(arr[5] ?? 0),
+            likes: 0,
           };
         })
       );
 
       return items;
     } catch (err: unknown) {
-      console.error('getPostComments failed', err);
+      console.error('getCommentsForPost failed', err);
       return [];
     }
   }, [publicClient]);
 
   return {
-    createComment,
-    getPostComments,
+    addComment,
+    getCommentsForPost,
   };
 }
