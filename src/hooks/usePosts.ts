@@ -67,47 +67,113 @@ export function usePosts() {
     }
 
     try {
-      const ids: unknown = await publicClient.readContract({
-        address: postsAddr as `0x${string}`,
-        abi: POSTS_ABI as unknown as Abi,
-        functionName: 'getAllPosts',
-      });
+      // Try to use getAllPosts if available
+      let items: Post[] = [];
+      try {
+        const ids: unknown = await publicClient.readContract({
+          address: postsAddr as `0x${string}`,
+          abi: POSTS_ABI as unknown as Abi,
+          functionName: 'getAllPosts',
+        });
 
-      const idsArr: unknown[] = Array.isArray(ids) ? (ids as unknown[]) : [];
+        const idsArr: unknown[] = Array.isArray(ids) ? (ids as unknown[]) : [];
 
-      const items = await Promise.all(
-        idsArr.map(async (id: unknown) => {
-          const raw: unknown = await publicClient.readContract({
-            address: postsAddr as `0x${string}`,
-            abi: POSTS_ABI as unknown as Abi,
-            functionName: 'getPost',
-            args: [id as unknown],
-          });
+        items = await Promise.all(
+          idsArr.map(async (id: unknown) => {
+            const raw: unknown = await publicClient.readContract({
+              address: postsAddr as `0x${string}`,
+              abi: POSTS_ABI as unknown as Abi,
+              functionName: 'getPost',
+              args: [id as unknown],
+            });
 
-          // raw expected: [id, author, content, timestamp, likesCount, commentsCount, exists]
-          const arr = raw as unknown as [
-            bigint | number | string,
-            string,
-            string,
-            bigint | number,
-            bigint | number,
-            bigint | number,
-            boolean
-          ];
+            const arr = raw as unknown as [
+              bigint | number | string,
+              string,
+              string,
+              bigint | number
+            ];
 
-          const parsed: Post = {
-            id: arr[0]?.toString?.() ?? String(id),
-            author: arr[1] ?? '0x0',
-            content: arr[2] ?? '',
-            timestamp: Number(arr[3] ?? Date.now()),
-            likes: Number(arr[4] ?? 0),
-            comments: Number(arr[5] ?? 0),
-            reposts: 0,
-          };
+            const parsed: Post = {
+              id: arr[0]?.toString?.() ?? String(id),
+              author: arr[1] ?? '0x0',
+              content: arr[2] ?? '',
+              timestamp: Number(arr[3] ?? Date.now()),
+              likes: 0,
+              comments: 0,
+              reposts: 0,
+            };
 
-          return parsed;
-        })
-      );
+            // try to read likeCounts if available
+            try {
+              const likeRes: unknown = await publicClient.readContract({
+                address: postsAddr as `0x${string}`,
+                abi: POSTS_ABI as unknown as Abi,
+                functionName: 'likeCounts',
+                args: [BigInt(parsed.id)],
+              });
+              parsed.likes = Number(likeRes ?? 0);
+            } catch {
+              // ignore
+            }
+
+            return parsed;
+          })
+        );
+      } catch (errGetAll) {
+        // getAllPosts not available — fallback to sequential posts(index)
+        const collected: Post[] = [];
+        const maxScan = 200; // limit
+        for (let i = 0; i < maxScan; i++) {
+          try {
+            const raw: unknown = await publicClient.readContract({
+              address: postsAddr as `0x${string}`,
+              abi: POSTS_ABI as unknown as Abi,
+              functionName: 'posts',
+              args: [BigInt(i)],
+            });
+
+            const arr = raw as unknown as [
+              bigint | number | string,
+              string,
+              string,
+              bigint | number
+            ];
+
+            // if id is falsy and i>0 assume end
+            const idVal = Number(arr[0] ?? 0);
+            if (!idVal) break;
+
+            const parsed: Post = {
+              id: arr[0]?.toString?.() ?? String(i),
+              author: arr[1] ?? '0x0',
+              content: arr[2] ?? '',
+              timestamp: Number(arr[3] ?? Date.now()),
+              likes: 0,
+              comments: 0,
+              reposts: 0,
+            };
+
+            try {
+              const likeRes: unknown = await publicClient.readContract({
+                address: postsAddr as `0x${string}`,
+                abi: POSTS_ABI as unknown as Abi,
+                functionName: 'likeCounts',
+                args: [BigInt(i)],
+              });
+              parsed.likes = Number(likeRes ?? 0);
+            } catch {
+              // ignore
+            }
+
+            collected.push(parsed);
+          } catch (innerErr) {
+            // stop scanning on errors
+            break;
+          }
+        }
+        items = collected;
+      }
 
       // sort by timestamp desc
       items.sort((a, b) => b.timestamp - a.timestamp);
