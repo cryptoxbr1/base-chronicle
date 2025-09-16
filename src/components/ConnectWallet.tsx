@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useConnect, useAccount } from "wagmi";
 import { Wallet, Shield, Zap, ChevronRight } from "lucide-react";
 import { useEffect } from "react";
