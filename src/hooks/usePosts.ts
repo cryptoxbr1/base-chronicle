@@ -47,7 +47,7 @@ export function usePosts() {
     try {
       const ids: unknown = await publicClient.readContract({
         address: postsAddr as `0x${string}`,
-        abi: POSTS_ABI as unknown as any,
+        abi: POSTS_ABI as unknown as Abi,
         functionName: 'getAllPosts',
       });
 
@@ -57,23 +57,32 @@ export function usePosts() {
         idsArr.map(async (id: unknown) => {
           const raw: unknown = await publicClient.readContract({
             address: postsAddr as `0x${string}`,
-            abi: POSTS_ABI as unknown as any,
+            abi: POSTS_ABI as unknown as Abi,
             functionName: 'getPost',
-            args: [id as any],
+            args: [id as unknown],
           });
 
           // raw expected: [id, author, content, timestamp, likesCount, commentsCount, exists]
+          const arr = raw as unknown as [
+            bigint | number | string,
+            string,
+            string,
+            bigint | number,
+            bigint | number,
+            bigint | number,
+            boolean
+          ];
+
           const parsed: Post = {
-            id: raw[0]?.toString() ?? id?.toString?.() ?? String(id),
-            author: raw[1] ?? '0x0',
-            content: raw[2] ?? '',
-            timestamp: Number(raw[3] ?? Date.now()),
-            likes: Number(raw[4] ?? 0),
-            comments: Number(raw[5] ?? 0),
+            id: arr[0]?.toString?.() ?? String(id),
+            author: arr[1] ?? '0x0',
+            content: arr[2] ?? '',
+            timestamp: Number(arr[3] ?? Date.now()),
+            likes: Number(arr[4] ?? 0),
+            comments: Number(arr[5] ?? 0),
             reposts: 0,
           };
 
-          // try to compute txHash if available (not always provided)
           return parsed;
         })
       );
