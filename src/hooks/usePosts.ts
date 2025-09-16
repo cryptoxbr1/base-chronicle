@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { usePublicClient, useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { usePublicClient, useAccount, useWriteContract, useWaitForTransactionReceipt, useConnect } from 'wagmi';
 import type { Abi } from 'abitype';
 import { CONTRACT_ADDRESSES, POSTS_ABI } from '@/lib/contracts';
 import { toast } from 'sonner';
