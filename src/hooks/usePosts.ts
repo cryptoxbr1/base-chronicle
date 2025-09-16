@@ -63,7 +63,10 @@ export function usePosts() {
 
     const postsAddr = CONTRACT_ADDRESSES.Posts;
     if (!postsAddr) {
-      setError('Posts contract not configured');
+      // Posts contract not configured — switch to demo/mock mode so users can still create posts locally
+      setUseMock(true);
+      setPosts(MOCK_POSTS);
+      setError('Posts contract not configured — running in demo mode');
       setIsLoading(false);
       return;
     }
