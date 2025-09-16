@@ -267,7 +267,7 @@ export function usePosts() {
       setPosts((p) => [newPost, ...p]);
       return;
     }
-  }, [writeCreatePost, fetchPosts, connected, useMock]);
+  }, [writeCreatePost, fetchPosts, connected, useMock, connectors, connect]);
 
   const likePost = useCallback(async (postId: string) => {
     const postsAddr = CONTRACT_ADDRESSES.Posts;
