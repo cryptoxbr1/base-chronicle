@@ -47,7 +47,7 @@ const Feed = ({ activeTab }: FeedProps) => {
 
   useEffect(() => {
     if (onChainPosts && onChainPosts.length > 0) {
-      setPosts(onChainPosts.map(p => ({ ...p, timestamp: new Date(p.timestamp) })) as any);
+      setPosts(onChainPosts.map((p) => ({ ...p, timestamp: new Date(p.timestamp as number) })) as Post[]);
     }
   }, [onChainPosts]);
 
