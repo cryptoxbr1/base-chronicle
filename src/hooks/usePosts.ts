@@ -150,15 +150,15 @@ export function usePosts() {
 
     try {
       await writeUnlikePost({
-        address: postsAddr as any,
-        abi: POSTS_ABI as any,
+        address: postsAddr as `0x${string}`,
+        abi: POSTS_ABI as unknown as any,
         functionName: 'unlikePost',
         args: [BigInt(postId)],
       });
       toast.success('Unlike tx submitted');
       await new Promise((res) => setTimeout(res, 800));
       await fetchPosts();
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('unlike failed', err);
       toast.error('Failed to unlike');
     }
