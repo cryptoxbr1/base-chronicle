@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import PostCard from "./PostCard";
-import { useEffect, useState } from "react";
 import CreatePost from "./CreatePost";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
