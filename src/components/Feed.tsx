@@ -5,17 +5,18 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, TrendingUp, Hash, Users } from "lucide-react";
+import { usePosts } from "@/hooks/usePosts";
 
 interface Post {
   id: string;
   author: string;
-  username: string;
+  username?: string;
   content: string;
   timestamp: Date;
   likes: number;
   comments: number;
   reposts: number;
-  isLiked: boolean;
+  isLiked?: boolean;
   avatarUrl?: string;
   txHash?: string;
 }
@@ -33,42 +34,6 @@ const mockPosts: Post[] = [
     isLiked: false,
     txHash: "0xabc123..."
   },
-  {
-    id: "2",
-    author: "0x9876...5432",
-    username: "nft_collector",
-    content: "Love how I can use my @BoredApeYC as my profile picture here! Finally, true NFT utility in social media. This is what we've been waiting for.",
-    timestamp: new Date(Date.now() - 15 * 60 * 1000),
-    likes: 128,
-    comments: 23,
-    reposts: 45,
-    isLiked: true,
-    txHash: "0xdef456..."
-  },
-  {
-    id: "3",
-    author: "0x5555...7777",
-    username: "defi_degen",
-    content: "GM Web3! 🌅 The future of social media is decentralized. No more censorship, no more data harvesting. Just pure, on-chain expression. #DecentralizedSocial",
-    timestamp: new Date(Date.now() - 45 * 60 * 1000),
-    likes: 89,
-    comments: 15,
-    reposts: 28,
-    isLiked: false,
-    txHash: "0x789abc..."
-  },
-  {
-    id: "4",
-    author: "0x8888...9999",
-    username: "base_maxi",
-    content: "Building on Base feels like magic ✨ Fast, cheap, and secure. BaseLine is going to change how we think about social networks forever!",
-    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    likes: 156,
-    comments: 34,
-    reposts: 67,
-    isLiked: true,
-    txHash: "0x456def..."
-  }
 ];
 
 interface FeedProps {
@@ -76,30 +41,53 @@ interface FeedProps {
 }
 
 const Feed = ({ activeTab }: FeedProps) => {
+  const { posts: onChainPosts, isLoading, refetch, createPost, likePost, unlikePost } = usePosts();
   const [posts, setPosts] = useState<Post[]>(mockPosts);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const handleNewPost = (content: string) => {
-    const newPost: Post = {
-      id: Date.now().toString(),
-      author: "0x1234...5678",
-      username: "baseline_user",
-      content,
-      timestamp: new Date(),
-      likes: 0,
-      comments: 0,
-      reposts: 0,
-      isLiked: false,
-      txHash: `0x${Math.random().toString(16).substr(2, 8)}...`
-    };
-    setPosts([newPost, ...posts]);
+  useEffect(() => {
+    if (onChainPosts && onChainPosts.length > 0) {
+      setPosts(onChainPosts.map(p => ({ ...p, timestamp: new Date(p.timestamp) })) as any);
+    }
+  }, [onChainPosts]);
+
+  const handleNewPost = async (content: string) => {
+    if (createPost) {
+      await createPost(content);
+      await refetch();
+    } else {
+      const newPost: Post = {
+        id: Date.now().toString(),
+        author: "0x1234...5678",
+        username: "baseline_user",
+        content,
+        timestamp: new Date(),
+        likes: 0,
+        comments: 0,
+        reposts: 0,
+        isLiked: false,
+        txHash: `0x${Math.random().toString(16).substr(2, 8)}...`
+      };
+      setPosts([newPost, ...posts]);
+    }
   };
 
-  const handleLike = (postId: string) => {
-    setPosts(posts.map(post => 
-      post.id === postId 
-        ? { 
-            ...post, 
+  const handleLike = async (postId: string) => {
+    // try to like/unlike via contract
+    const found = posts.find(p => p.id === postId);
+    if (!found) return;
+
+    if (found.isLiked) {
+      await unlikePost(postId).catch(() => {});
+    } else {
+      await likePost(postId).catch(() => {});
+    }
+
+    // optimistic UI update
+    setPosts(posts.map(post =>
+      post.id === postId
+        ? {
+            ...post,
             isLiked: !post.isLiked,
             likes: post.isLiked ? post.likes - 1 : post.likes + 1
           }
@@ -109,12 +97,11 @@ const Feed = ({ activeTab }: FeedProps) => {
 
   const handleComment = (postId: string) => {
     console.log("Comment on post:", postId);
-    // TODO: Implement comment functionality
   };
 
   const handleRepost = (postId: string) => {
-    setPosts(posts.map(post => 
-      post.id === postId 
+    setPosts(posts.map(post =>
+      post.id === postId
         ? { ...post, reposts: post.reposts + 1 }
         : post
     ));
@@ -122,7 +109,7 @@ const Feed = ({ activeTab }: FeedProps) => {
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await refetch();
     setIsRefreshing(false);
   };
 
@@ -131,7 +118,7 @@ const Feed = ({ activeTab }: FeedProps) => {
       case 'trending':
         return [...posts].sort((a, b) => b.likes - a.likes);
       case 'explore':
-        return [...posts].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+        return [...posts].sort((a, b) => (b.timestamp as any).getTime() - (a.timestamp as any).getTime());
       default:
         return posts;
     }
