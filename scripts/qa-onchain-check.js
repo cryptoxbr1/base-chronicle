@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { ethers } = require('ethers');
+import { ethers } from 'ethers';
 
 async function main() {
   const rpc = process.env.VITE_BASE_RPC || process.env.BASE_RPC || 'https://mainnet.base.org';
@@ -32,15 +32,15 @@ async function main() {
       console.log('Post:', {
         id: post.id.toString(),
         author: post.author,
-        content: post.content.slice(0, 120),
+        content: (post.content || '').slice(0, 120),
         timestamp: post.timestamp.toString(),
-        likes: post.likesCount?.toString?.() || post[4]?.toString?.(),
+        likes: (post.likesCount?.toString?.() || post[4]?.toString?.())
       });
     } else {
       console.log('No posts found on-chain (getAllPosts returned empty array).');
     }
   } catch (err) {
-    console.error('On-chain checks failed:', err.message || err);
+    console.error('On-chain checks failed:', (err && err.message) || err);
     process.exit(1);
   }
 }
