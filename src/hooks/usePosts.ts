@@ -196,6 +196,26 @@ export function usePosts() {
   }, [fetchPosts]);
 
   const createPost = useCallback(async (content: string) => {
+    // If user not connected, trigger wallet popup
+    if (!connected) {
+      try {
+        const preferred = ["MetaMask","Coinbase Wallet"];
+        const findPreferred = connectors.find((c) => preferred.some((p) => c.name.toLowerCase().includes(p.toLowerCase())));
+        const fallback = connectors.find((c) => c.ready) || connectors[0];
+        const target = findPreferred || fallback;
+        if (target && connect) {
+          await connect({ connector: target });
+          try { toast('Please approve the connection in your wallet'); } catch { /* ignore */ }
+          return;
+        }
+      } catch (err) {
+        console.error('connect trigger failed', err);
+      }
+
+      try { toast('Please connect your wallet to post'); } catch { /* ignore */ }
+      return;
+    }
+
     const postsAddr = CONTRACT_ADDRESSES.Posts;
     if (!postsAddr) {
       toast.error('Posts contract not configured');
