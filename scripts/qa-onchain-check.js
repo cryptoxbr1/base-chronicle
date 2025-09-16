@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { ethers } from 'ethers';
+import { JsonRpcProvider, Contract } from 'ethers';
 
 async function main() {
   const rpc = process.env.VITE_BASE_RPC || process.env.BASE_RPC || 'https://mainnet.base.org';
@@ -13,7 +13,7 @@ async function main() {
     process.exit(2);
   }
 
-  const provider = new ethers.providers.JsonRpcProvider(rpc);
+  const provider = new JsonRpcProvider(rpc);
 
   const POSTS_ABI = [
     'function getAllPosts() view returns (uint256[])',
@@ -21,7 +21,7 @@ async function main() {
   ];
 
   try {
-    const contract = new ethers.Contract(postsAddr, POSTS_ABI, provider);
+    const contract = new Contract(postsAddr, POSTS_ABI, provider);
     console.log('Calling getAllPosts...');
     const ids = await contract.getAllPosts();
     console.log('Received ids length:', ids.length);
