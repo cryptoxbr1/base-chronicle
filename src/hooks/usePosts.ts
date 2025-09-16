@@ -218,6 +218,12 @@ export function usePosts() {
     }
 
     try {
+      if (useMock) {
+        setPosts((p) => p.map((post) => post.id === postId ? { ...post, isLiked: false, likes: Math.max(0, post.likes - 1) } : post));
+        toast.success('Unliked (demo)');
+        return;
+      }
+
       await writeUnlikePost({
         address: postsAddr as `0x${string}`,
         abi: POSTS_ABI as unknown as Abi,
@@ -231,7 +237,7 @@ export function usePosts() {
       console.error('unlike failed', err);
       toast.error('Failed to unlike');
     }
-  }, [writeUnlikePost, fetchPosts]);
+  }, [writeUnlikePost, fetchPosts, useMock]);
 
   return {
     posts,
