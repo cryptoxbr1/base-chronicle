@@ -1,9 +1,9 @@
-// Contract addresses (update after deployment)
+// Contract addresses sourced from Vite environment variables
 export const CONTRACT_ADDRESSES = {
-  Profiles: '0x0000000000000000000000000000000000000000', // Update after deployment
-  Posts: '0x0000000000000000000000000000000000000000',    // Update after deployment
-  Comments: '0x0000000000000000000000000000000000000000', // Update after deployment
-  Follow: '0x0000000000000000000000000000000000000000',   // Update after deployment
+  Profiles: import.meta.env.VITE_BASELINE_PROFILES as string | undefined,
+  Posts: import.meta.env.VITE_BASELINE_POSTS as string | undefined,
+  Comments: import.meta.env.VITE_BASELINE_COMMENTS as string | undefined,
+  Follow: import.meta.env.VITE_BASELINE_FOLLOW as string | undefined,
 } as const;
 
 // Contract ABIs (simplified for key functions)
