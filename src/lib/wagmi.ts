@@ -12,6 +12,8 @@ const connectors = [
     appName: 'BaseLine',
     appLogoUrl: '/baseline-logo.png',
   }),
+  // OKX Wallet connector (if available in the environment)
+  okxWallet ? okxWallet() : undefined,
   ...(walletConnectProjectId
     ? [
         walletConnect({
