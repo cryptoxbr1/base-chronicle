@@ -117,7 +117,7 @@ export function usePosts() {
       setError((err as { message?: string })?.message ?? 'Failed to fetch posts');
       // fallback to local mock data so UI remains functional
       setUseMock(true);
-      setPosts(mockPosts);
+      setPosts(MOCK_POSTS);
     } finally {
       setIsLoading(false);
     }
